@@ -1,0 +1,12 @@
+www.<my domain>.<tld> {
+  redir https://<my domain>.<tld> permanent
+}
+
+<my domain>.<tld> {
+  root * /var/www/my-website
+  file_server
+}
+
+<planet name>.<my domain>.<tld> {
+  reverse_proxy web-<planet name>-1:80
+}

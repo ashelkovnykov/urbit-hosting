@@ -1,0 +1,45 @@
+version: "3.8"
+
+networks:
+  web:
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ~/Caddyfile:/etc/caddy/Caddyfile
+      - ~/sites:/var/www
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - web
+    logging:
+      driver: "local"
+  <planet name>:
+    # tloncorp/urbit:latest at the time used Tlon internal binaries
+    image: tloncorp/urbit:v1.8
+    restart: always
+    ports:
+      - "34343:34343/udp"
+    volumes:
+      - <planet name>:/urbit
+    networks:
+      - web
+    logging:
+      driver: "local"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - caddy
+ 
+volumes:
+  caddy_data:
+    external: true
+  caddy_config:
+    external: true
+  <planet name>:
+    external: true

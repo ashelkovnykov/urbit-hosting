@@ -1,0 +1,12 @@
+www.ashelkov.com {
+  redir https://ashelkov.com permanent
+}
+
+ashelkov.com {
+  root * /var/www/ashelkov
+  file_server
+}
+
+finmeplanteb.ashelkov.com {
+  reverse_proxy web-finmep-lanteb-1:80
+}
