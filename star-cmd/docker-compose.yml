@@ -20,8 +20,9 @@ services:
     logging:
       driver: "local"
   <planet name>:
-    # tloncorp/urbit:latest at the time used Tlon internal binaries
-    image: tloncorp/urbit:v1.8
+    # Using direct version numbers because sometimes latest is a Tlon-internal binary
+    # See https://hub.docker.com/r/tloncorp/urbit
+    image: tloncorp/urbit:v1.9
     restart: always
     ports:
       - "34343:34343/udp"
