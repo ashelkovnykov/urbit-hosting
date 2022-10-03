@@ -22,7 +22,7 @@ services:
   <planet name>:
     # Using direct version numbers because sometimes latest is a Tlon-internal binary
     # See https://hub.docker.com/r/tloncorp/urbit
-    image: tloncorp/urbit:v1.9
+    image: tloncorp/urbit:v1.10
     restart: always
     ports:
       - "34343:34343/udp"
