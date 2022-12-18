@@ -19,9 +19,24 @@ services:
       - web
     logging:
       driver: "local"
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - web
+    volumes:
+      - minio_storage:/data
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: [ADMIN_PASSWORD]
+      MINIO_DOMAIN: minio.ashelkov.com
+      MINIO_SERVER_URL: https://minio.ashelkov.com
+    command: server --console-address ":9001" /data
   finmep-lanteb:
     # tloncorp/urbit:latest at the time used Tlon internal binaries
-    image: tloncorp/urbit:v1.8
+    image: tloncorp/urbit:v1.14
     restart: always
     ports:
       - "34343:34343/udp"
@@ -35,6 +50,7 @@ services:
     tty: true
     depends_on:
       - caddy
+      - minio
  
 volumes:
   caddy_data:
@@ -43,3 +59,4 @@ volumes:
     external: true
   finmep-lanteb:
     external: true
+  minio_storage: {}
