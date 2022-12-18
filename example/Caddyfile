@@ -10,3 +10,10 @@ ashelkov.com {
 finmeplanteb.ashelkov.com {
   reverse_proxy web-finmep-lanteb-1:80
 }
+
+console.minio.ashelkov.com {
+  reverse_proxy web-minio-1:9001
+}
+minio.ashelkov.com [BUCKET_NAME].minio.ashelkov.com {
+  reverse_proxy web-minio-1:9000
+}

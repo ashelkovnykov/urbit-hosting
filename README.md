@@ -1,7 +1,7 @@
 # Urbit Hosting
 
 This repo contains configurable files which can used to set up a VPS server to host one or more websites and Urbit
-planets at the same time, using Docker and Caddy.
+planets at the same time, using Docker, Caddy, and MinIO.
 
 ## Directory Layout
 
@@ -25,6 +25,12 @@ planets at the same time, using Docker and Caddy.
    |- vps-setup: Bash script to setup the VPS environment (install dependencies,
                  enable firewall, etc.)
 ```
+
+# Setup
+
+## DNS
+
+Add wildcard subdomain A rules that point to your VPS' IP for each of the mappings in Caddyfile.
 
 ## Usage
 
