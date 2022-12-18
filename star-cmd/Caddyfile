@@ -10,3 +10,11 @@ www.<my domain>.<tld> {
 <planet name>.<my domain>.<tld> {
   reverse_proxy web-<planet name>-1:80
 }
+
+console.minio.<my domain>.<tld> {
+  reverse_proxy web-minio-1:9001
+}
+
+minio.ashelkov.com <bucket name>.minio.<my domain>.<tld> {
+  reverse_proxy web-minio-1:9000
+}

@@ -49,7 +49,7 @@ curl -L "https://github.com/docker/compose/releases/download/v2.2.3/docker-compo
 chmod +x /usr/local/bin/docker-compose
 
 # add system user to docker group
-usermod -aG docker web
+usermod -aG sudo web
 
 # create persistent docker volumes
 docker volume create caddy_data

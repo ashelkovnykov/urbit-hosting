@@ -19,10 +19,25 @@ services:
       - web
     logging:
       driver: "local"
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - web
+    volumes:
+      - minio_storage:/data
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: <admin password>
+      MINIO_DOMAIN: minio.<my domain>.<tld>
+      MINIO_SERVER_URL: https://minio.<my domain>.<tld>
+    command: server --console-address ":9001" /data
   <planet name>:
     # Using direct version numbers because sometimes latest is a Tlon-internal binary
     # See https://hub.docker.com/r/tloncorp/urbit
-    image: tloncorp/urbit:v1.10
+    image: tloncorp/urbit:v1.14
     restart: always
     ports:
       - "34343:34343/udp"
@@ -36,6 +51,7 @@ services:
     tty: true
     depends_on:
       - caddy
+      - minio
  
 volumes:
   caddy_data:
@@ -44,3 +60,4 @@ volumes:
     external: true
   <planet name>:
     external: true
+  minio_storage: {}
