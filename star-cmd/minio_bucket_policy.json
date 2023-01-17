@@ -30,6 +30,13 @@
           "Resource": [
               "arn:aws:s3:::[BUCKET_NAME]/*"
           ]
-      }
+      },
+      {
+        "Sid": "DenyListBucket",
+        "Effect": "Deny",
+        "Principal": "*",
+        "Action": "s3:ListBucket",
+        "Resource": "arn:aws:s3:::[BUCKET_NAME]"
+    }
   ]
 }
