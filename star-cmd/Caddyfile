@@ -15,6 +15,6 @@ console.minio.<my domain>.<tld> {
   reverse_proxy web-minio-1:9001
 }
 
-minio.ashelkov.com <bucket name>.minio.<my domain>.<tld> {
+minio.<my domain>.<tld> <bucket name>.minio.<my domain>.<tld> {
   reverse_proxy web-minio-1:9000
 }

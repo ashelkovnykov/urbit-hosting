@@ -9,20 +9,38 @@
 # stop on error
 set -e
 
-# create system user to run ship
-adduser --system web
+#
+# environment variables
+#
 
-# setup environment variables
-export AMES_PORT=34343
-export SSH_PORT=<your ssh port>
-export MEM_IN_MB=<your server memory in MB>
-export PLANET_NAME=<your planet name>
-export CMD_ROOT=<path to this repo on VPS>
+# regular user account w/ sudo privileges
+export DAILY_USER=<user account>
+# add more ships here if running multiple ships
+#   e.g. SHIPS=sampel-palnet littel-possum rinsed-dishes
+export SHIPS=<ship name>
+# system user to own files; default 'web'
+export SYSTEM_USER=web
+# add more ports here if running multiple ships
+#   e.g. AMES_PORTS=34343 45454 12121
+export AMES_PORTS=34343
+# ssh port, if accessing server remotely (as with VPS)
+export SSH_PORT=22
+# size of swap file
+export MEM_IN_MB=6000
+# path to root dir of this repo locally
+export CMD_ROOT=/root/star-cmd
+
+#
+# main script
+#
+
+# create system user to run ship
+adduser --system $SYSTEM_USER
 
 # open firewall
 ufw allow 80/udp
 ufw allow 443/tcp
-ufw allow $AMES_PORT/udp
+for PORT in $AMES_PORTS; do ufw allow $PORT/udp; done
 ufw allow $SSH_PORT/tcp
 ufw enable
 
@@ -45,27 +63,37 @@ apt update
 apt install docker-ce
 
 # install docker-compose
-curl -L "https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+curl -L "https://github.com/docker/compose/releases/download/v2.14.2/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
-# add system user to docker group
-usermod -aG sudo web
+# add system user to sudo group
+usermod -aG sudo $SYSTEM_USER
 
 # create persistent docker volumes
-docker volume create caddy_data
-docker volume create caddy_config
-docker volume create $PLANET_NAME
+sudo docker volume create caddy_data
+sudo docker volume create caddy_config
 
-# copy control files to /home/web/
-cp "$CMD_ROOT/Caddyfile" /home/web/
-cp "$CMD_ROOT/docker-compose.yml" /home/web/
-cp "$CMD_ROOT/start.sh" /home/web/
-cp "$CMD_ROOT/stop.sh" /home/web/
-cp -r "$CMD_ROOT/sites" /home/web/
-chown -R web:docker /home/web/*
+# copy control files to system user home
+cp "$CMD_ROOT/Caddyfile" /home/$SYSTEM_USER/
+cp "$CMD_ROOT/docker-compose.yml" /home/$SYSTEM_USER/
+cp "$CMD_ROOT/start.sh" /home/$SYSTEM_USER/
+cp "$CMD_ROOT/stop.sh" /home/$SYSTEM_USER/
+cp -r "$CMD_ROOT/sites" /home/$SYSTEM_USER/
+chown -R $SYSTEM_USER:$SYSTEM_USER /home/$SYSTEM_USER/*
 
-# copy planet key to volume
-docker pull busybox
-docker run -v $PLANET_NAME:/data --name copier busybox true
-docker cp "$CMD_ROOT/$PLANET_NAME.key" copier:"/data/$PLANET_NAME.key"
-docker rm copier
+# copy control files to daily user home
+cp "$CMD_ROOT/launch.sh" /home/DAILY_USER/
+cp "$CMD_ROOT/thwart.sh" /home/DAILY_USER/
+chown -R DAILY_USER:DAILY_USER /home/DAILY_USER/*
+
+for SHIP in $SHIPS;
+do
+  # create persistent docker volume for ship
+  sudo docker volume create $SHIP
+
+  # copy planet key to volume
+  sudo docker pull busybox
+  sudo docker run -v $SHIP:/data --name copier busybox true
+  sudo docker cp "$CMD_ROOT/$SHIP.key" copier:"/data/$SHIP.key"
+  sudo docker rm copier
+done

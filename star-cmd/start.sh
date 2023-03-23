@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 
-# run docker using docker-compose in detached mode
-docker-compose -f ~/docker-compose.yml up -d
-
+# run docker using compose in detached mode
+docker compose -f ~/compose.yml up -d --build --force-recreate

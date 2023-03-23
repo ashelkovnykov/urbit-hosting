@@ -1,5 +1,3 @@
-version: "3.8"
-
 networks:
   web:
 
@@ -35,11 +33,10 @@ services:
       MINIO_SERVER_URL: https://minio.<my domain>.<tld>
     command: server --console-address ":9001" /data
   <planet name>:
-    # Using direct version numbers because sometimes latest is a Tlon-internal binary
-    # See https://hub.docker.com/r/tloncorp/urbit
-    image: tloncorp/urbit:v1.14
+    image: tloncorp/vere:latest
     restart: always
     ports:
+      - "8080:80"
       - "34343:34343/udp"
     volumes:
       - <planet name>:/urbit
@@ -47,12 +44,19 @@ services:
       - web
     logging:
       driver: "local"
-    stdin_open: true
-    tty: true
+    # These used to work, but currently aren't. It's pretty annoying, as to do
+    # troubleshooting, you need to either use the web terminal, or you need to
+    # stop your ship, launch it manually without using docker compose, perform
+    # troubleshooting, then exit and relaunch using docker compose.
+    #
+    # See:
+    #
+    #    stdin_open: true
+    #    tty: true
     depends_on:
       - caddy
       - minio
- 
+
 volumes:
   caddy_data:
     external: true
