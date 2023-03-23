@@ -35,6 +35,24 @@ services:
   <planet name>:
     image: tloncorp/vere:latest
     restart: always
+    # If you're going to host multiple ships, each ship will need to use
+    # different ports.
+    #
+    # The HTTP port should map to a linearly increasing port number for each
+    # successive ship (e.g. 8081, 8082, 8083, ...).
+    #
+    # The Ames port should be mapped to whatever port you want, that you listed
+    # as needing to be opened in vps-setup.sh (e.g. 45454, 12121, ...). In
+    # addition, the Ames port will also need to be explicitly set for each
+    # ship after the first as part of the launch command. Note that this isn't
+    # absolutely necessary, but it will GREATLY increase the networking
+    # efficiency of your ship.
+    #
+    #   Example setup for a second ship
+    # ports:
+    #   - "8081:80"
+    #   - "45454:45454/udp"
+    # command: -p=45454
     ports:
       - "8080:80"
       - "34343:34343/udp"
@@ -51,8 +69,8 @@ services:
     #
     # See:
     #
-    #    stdin_open: true
-    #    tty: true
+    # stdin_open: true
+    # tty: true
     depends_on:
       - caddy
       - minio

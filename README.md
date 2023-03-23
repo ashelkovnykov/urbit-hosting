@@ -45,8 +45,15 @@ Note that it assumes you already have:
         3. You may need/want to modify the default values on lines `22` - `31`.
            If you modify line `22`, you'll also need to modify the `launch.sh`
            and `thwart.sh` scripts to match the new system user.
+        4. Note the comments on lines `18` and `23` if you plan to host
+           multiple ships
     3. `compose.yml`
-       1. 
+       1. line `35`
+       2. line `60`
+       3. line `83`
+       4. If you're hosting more than one ship, you'll need to note the comments
+          on lines `38` - `55`. You will also need to clone lines `83` - `84`
+          for each additional ship.
 3. If you're not using MinIO, you can delete `minio_bucket_policy.json`, all of
    the MinIO info in `Caddyfile`, and lines `20` - `34`, line `58`, and line
    `67`.
