@@ -74,6 +74,12 @@ services:
     depends_on:
       - caddy
       - minio
+  watchtower:
+    image: containrrr/watchtower:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
+    command: web-<planet-name>-1
 
 volumes:
   caddy_data:
