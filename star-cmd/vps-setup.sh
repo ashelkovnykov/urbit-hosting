@@ -82,9 +82,9 @@ cp -r "$CMD_ROOT/sites" /home/$SYSTEM_USER/
 chown -R $SYSTEM_USER:$SYSTEM_USER /home/$SYSTEM_USER/*
 
 # copy control files to daily user home
-cp "$CMD_ROOT/launch.sh" /home/DAILY_USER/
-cp "$CMD_ROOT/thwart.sh" /home/DAILY_USER/
-chown -R DAILY_USER:DAILY_USER /home/DAILY_USER/*
+cp "$CMD_ROOT/launch.sh" /home/$DAILY_USER/
+cp "$CMD_ROOT/thwart.sh" /home/$DAILY_USER/
+chown -R $DAILY_USER:$DAILY_USER /home/$DAILY_USER/*
 
 for SHIP in $SHIPS;
 do
