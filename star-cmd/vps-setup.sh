@@ -97,3 +97,29 @@ do
   sudo docker cp "$CMD_ROOT/$SHIP.key" copier:"/data/$SHIP.key"
   sudo docker rm copier
 done
+
+# copy SSH pub keys to authorized_keys
+mkdir -p /home/$DAILY_USER/.ssh
+cp "$CMD_ROOT/authorized_keys" /home/$DAILY_USER/.ssh/
+
+# hardening
+
+## first, backup the sshd_config file
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+
+## disable password login
+sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
+
+## disable root login
+sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/g' /etc/ssh/sshd_config
+
+## install + configure fail2ban
+apt install fail2ban
+cp "$CMD_ROOT/jail.conf" /etc/fail2ban/jail.local
+systemctl enable fail2ban
+systemctl restart fail2ban
+
+# done :)
+echo "Done! Rebooting in 10 seconds..."
+sleep 10
+reboot
