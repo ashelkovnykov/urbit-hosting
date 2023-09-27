@@ -63,7 +63,7 @@ apt update
 apt install docker-ce
 
 # install docker-compose
-curl -L "https://github.com/docker/compose/releases/download/v2.14.2/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+curl -L "https://github.com/docker/compose/releases/download/v2.22.0/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
 # add system user to sudo group
@@ -82,9 +82,9 @@ cp -r "$CMD_ROOT/sites" /home/$SYSTEM_USER/
 chown -R $SYSTEM_USER:$SYSTEM_USER /home/$SYSTEM_USER/*
 
 # copy control files to daily user home
-cp "$CMD_ROOT/launch.sh" /home/DAILY_USER/
-cp "$CMD_ROOT/thwart.sh" /home/DAILY_USER/
-chown -R DAILY_USER:DAILY_USER /home/DAILY_USER/*
+cp "$CMD_ROOT/launch.sh" /home/$DAILY_USER/
+cp "$CMD_ROOT/thwart.sh" /home/$DAILY_USER/
+chown -R $DAILY_USER:$DAILY_USER /home/$DAILY_USER/*
 
 for SHIP in $SHIPS;
 do
@@ -97,3 +97,29 @@ do
   sudo docker cp "$CMD_ROOT/$SHIP.key" copier:"/data/$SHIP.key"
   sudo docker rm copier
 done
+
+# copy SSH pub keys to authorized_keys
+mkdir -p /home/$DAILY_USER/.ssh
+cp "$CMD_ROOT/authorized_keys" /home/$DAILY_USER/.ssh/
+
+# hardening
+
+## first, backup the sshd_config file
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+
+## disable password login
+sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
+
+## disable root login
+sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/g' /etc/ssh/sshd_config
+
+## install + configure fail2ban
+apt install fail2ban
+cp "$CMD_ROOT/jail.conf" /etc/fail2ban/jail.local
+systemctl enable fail2ban
+systemctl restart fail2ban
+
+# done :)
+echo "Done! Rebooting in 10 seconds..."
+sleep 10
+reboot
